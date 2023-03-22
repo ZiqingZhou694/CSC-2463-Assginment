@@ -107,14 +107,17 @@ function selectColor(){
   }
   else if(mouseY <= 240){
     paintcolor = color(150,75,0);
+    soundName = "sweep";
     console.log('changed to brown');
   }
   else if(mouseY <= 270){
     paintcolor = color(255,255,255);;
+    soundName = "game";
     console.log('changed to white');
   }
   else if(mouseY <= 400){
     paintcolor = color(0,0,0);
+    soundName = "cartoon";
     console.log('changed to black');
   }
 }
