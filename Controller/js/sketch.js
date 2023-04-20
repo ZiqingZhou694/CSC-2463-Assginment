@@ -1,3 +1,12 @@
+let port;
+let writer, reader;
+let red, green, blue;
+let sensorData = {};
+const encoder = new TextEncoder();
+const decoder = new TextDecoder();
+
+let activationState = { active: false };
+
 let paintcolor = 255;
 let sounds = new Tone.Players({
   "nuggets": "sounds/chicken.wav",
@@ -25,12 +34,8 @@ let totalPixels;
 let blackPixels = 0;
 let pixelDensityThreshold = 0.3;
 
-let sensorData = {};
-const encoder = new TextEncoder();
-const decoder = new TextDecoder();
 
-let activationState = { active: false };
-let toggleButton;
+// let toggleButton;
 
 function setup() {
   createCanvas(1800, 700);
@@ -48,14 +53,20 @@ function setup() {
     button.position(10, 10);
     button.mousePressed(connect);
   }
-  serialRead(); // Add this line
+  // serialRead(); // Add this line
 
+  if (reader) {
+    serialRead();
+  }
 }
 
 function draw() {
   colorPalette();
   noStroke();
 
+  if (reader) {
+    serialRead();
+  }
   if (sensorData) {
     let brushX = map(sensorData.x, 0, 1023, 0, width);
     let brushY = map(sensorData.y, 0, 1023, 0, height);
@@ -170,6 +181,12 @@ function colorPalette() {
 }
 
 // Web Serial API functions
+function serialWrite(jsonObject) {
+  if (writer) {
+    writer.write(encoder.encode(JSON.stringify(jsonObject) + "\n"));
+  }
+}
+
 async function connect() {
   port = await navigator.serial.requestPort();
 
